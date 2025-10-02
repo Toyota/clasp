@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+outputs/
+*.ckpt
+*.pth
+*.pkl
+
+# Data (too large for git)
+data/
+preprocess/temp_data/
+preprocess/chunk_*.json
+
+# API keys and credentials - NEVER COMMIT THESE
+api_keys/
+*_key.txt
+*_token.txt
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+.trash/
+.Trash-*/
+
+# Cache
+*_cache/
+mlruns/
+demo_data/*

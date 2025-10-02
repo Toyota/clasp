@@ -1,0 +1,39 @@
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}/${hydra.job.name}/${now:%H-%M-%S}
+  job:
+    chdir: True
+    name: dev
+
+num_gpus: 1
+num_nodes: 1
+save_path: output
+optimizer: AdamW
+lr: 2e-5
+batch_size: 2048
+n_epochs: 2000
+log_every_n_steps: 1
+check_val_every_n_epoch: 5
+encoder_name: cgcnn
+hf_textencoder_model_id: allenai/scibert_scivocab_uncased
+max_token_length: 64
+embedding_dim: 768
+embedding_normalize: l2
+textmlp_n_layers: 3
+textmlp_hidden_dim: 768
+textmlp_dropout_prob: 0.
+n_conv_cgcnn: 5
+crystalencoder_n_mlp_layers: 2
+crystalencoder_dropout_prob: 0.
+loss_fn: cosface_loss
+clip_loss_temperature: 1.0
+margin: 0.5
+loss_scale: 3.0
+train_percent_check: 1.0
+val_percent_check: 1.0
+model_checkpoint_save_top_k: 3
+resume_ckpt_path: null
+dataset_cache_dir: "<DATA_DIR>/cod_full_20250801"
+input_pickle_path: "<DATA_DIR>/cod_metadata_20250801.csv"
+cod_basepath: <COD_DATA_DIR>
+freeze_text_encoders: True

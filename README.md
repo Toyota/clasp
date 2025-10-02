@@ -1,63 +1,150 @@
 # CLaSP (Contrastive Language-Structure Pre-training)
 
-## NOTICE
-
-This repository is provided in a tentative form and will be updated soon.
-
-
 ## Overview
-This repository contains the author’s implementation of the paper “Bridging Text and Crystal Structures: Literature-Driven Contrastive Learning for Materials Science.” 
-It includes all training and evaluation scripts for CLaSP (Contrastive  Language-Structure Pre-training), proposed in the publication.
+CLaSP (Contrastive Language-Structure Pre-training) is a multimodal learning framework that bridges crystal structures and text descriptions from scientific literature. This repository contains the official implementation of the paper "Bridging text and crystal structures: literature-driven contrastive learning for materials science" ([Y. Suzuki, T. Taniai, R. Igarashi _et al_ 2025 _Mach. Learn.: Sci. Technol._ __6__ 035006](https://iopscience.iop.org/article/10.1088/2632-2153/ade58c)).
 
-## Requirements
-Please refer to `docker/Dockerfile` for the complete software environment. All required Python versions and libraries are defined within the Dockerfile.
+CLaSP enables:
+- Text-based retrieval of crystal structures
+- Zero-shot classification of materials based on their properties
+- Serving as a foundation model for multimodal tasks bridging crystal structures and text (similar to CLIP)
 
 ## Installation
+
+### Using Docker (Recommended)
 ```bash
-# From repository root:
-
-# 1. Build Docker image
-docker build -t clasp:latest -f docker/Dockerfile .
-
-# 2. Start container (with GPU support if available)
-docker run --gpus all \
-  -v $(pwd):/workspace/clasp \
-  -w /workspace/clasp \
-  -it clasp:latest bash
+# Build Docker image from repository root
+docker build -t clasp:v1.0 -f docker/Dockerfile .
 ```
 
-## Usage
-to be updated
+### Requirements for manual setup
+- Python 3.8+
+- PyTorch 2.2+
+- CUDA 12.1+ (for GPU support)
+- See `docker/Dockerfile` for complete dependencies
 
-<!-- 1. Data Preparation  
 
-2. Training Example  
-   ```bash
-   python train_finetuning.py --config configs/clasp_finetune.yaml
-   ```
+# Quick Start
+## Extract Crystal Embeddings from CIF Files
 
-3. Inference Example  
-   ```bash
-   bash run_experiments.sh
-   ``` -->
+```bash
+# Extract embeddings using pretrained model
+docker run --gpus 1 --rm \
+  -v $(pwd):/workspace \
+  -w /workspace \
+  clasp:v1.0 python examples/extract_embeddings.py \
+    --checkpoint_path /workspace/model_weight/last.ckpt \
+    --cif_list /workspace/demo_data/cif_list.txt \
+    --output_path /workspace/demo_data/embeddings.npz \
+    --batch_size 32
+```
+
+
+## Pre-trained Models
+Pre-trained model weights will be released soon.
+
+
+# Training and Evaluation
+## Data Preparation
+
+### 1. Download COD Metadata
+```bash
+cd clasp/preprocess
+python download_cod_metadata.py cod_metadata_YYYYMMDD.csv
+```
+
+### 2. Download Crystal Structures (CIF files)
+```bash
+mkdir -p COD
+rsync -av --delete rsync://www.crystallography.net/cif/ COD/
+```
+
+## Training
+Training configurations are managed using Hydra. Key parameters in `configs/training.yaml`.
+Please modify the dataset path.
+
+### Pre-training CLaSP (with paper titles as the caption)
+```bash
+cd clasp
+python train_pretraining.py --config-name training
+```
+
+### Fine-tuning with Keywords (with generated keywords captions)
+```bash
+python train_finetuning.py --config-name finetuning \
+  finetuning_caption_json_path=path/to/keywords.json \
+  resume_ckpt_path=path/to/pretrained.ckpt
+```
+
+
+## Evaluation
+
+### Zero-shot Classification
+```bash
+cd clasp/eval_scripts
+python eval_zero_shot_roc.py \
+  --config_path ../configs/training.yaml \
+  --checkpoint_path path/to/checkpoint.ckpt
+```
+
+## Testing
+
+Run all unit tests:
+```bash
+# Using Docker
+docker run --rm -v $(pwd):/workspace -v /path/to/cod:/cod:ro -w /workspace clasp:v1.0 bash run_tests.sh
+
+# Or run individual test files
+docker run --rm -v $(pwd):/workspace -v /path/to/cod:/cod:ro -w /workspace clasp:v1.0 python tests/test_dataloaders.py
+```
+
 
 ## Citation
-If you use this code, please cite the paper using the following BibTeX entry:
+If you use CLaSP in your research, please cite:
 
 ```bibtex
 @misc{suzuki2025contrastivelanguagestructurepretrainingdriven,
-      title={Contrastive Language-Structure Pre-training Driven by Materials Science Literature}, 
-      author={Yuta Suzuki and Tatsunori Taniai and Ryo Igarashi and Kotaro Saito and Naoya Chiba and Yoshitaka Ushiku and Kanta Ono},
-      year={2025},
-      eprint={2501.12919},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2501.12919}, 
-}
+  doi = {10.1088/2632-2153/ade58c},
+  url = {https://dx.doi.org/10.1088/2632-2153/ade58c},
+  year = {2025},
+  month = {jul},
+  publisher = {IOP Publishing},
+  volume = {6},
+  number = {3},
+  pages = {035006},
+  author = {Suzuki, Yuta and Taniai, Tatsunori and Igarashi, Ryo and Saito, Kotaro and Chiba, Naoya and Ushiku, Yoshitaka and Ono, Kanta},
+  title = {Bridging text and crystal structures: literature-driven contrastive learning for materials science},
+  journal = {Machine Learning: Science and Technology},
+  }
 ```
 
-## TODO
-- [ ] Publish training and evaluation scripts  
-- [ ] Release pre-trained model weights  
-- [ ] Release dataset
-- [ ] Add examples
+## Troubleshooting
+
+### Common Issues
+
+1. **Out of memory errors**
+   - Reduce `batch_size` in configuration
+   - Enable gradient accumulation
+   - Use mixed precision training (already enabled by default)
+
+## Contributing
+
+We welcome contributions! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes and add tests
+4. Ensure all tests pass
+5. Submit a pull request
+
+## License
+This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](./LICENSE) file for details.
+
+## Contact
+
+For questions or issues, please open an issue on GitHub or contact the authors through the paper correspondence.
+
+---
+Copyright © 2025 Toyota Motor Corporation.  
+Copyright © 2025 OMRON SINIC X Corporation.  
+Copyright © 2025 Randeft, Inc.  
+Copyright © 2025 The University of Osaka.  
+All Rights Reserved.
