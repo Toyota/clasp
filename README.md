@@ -23,7 +23,20 @@ docker build -t clasp:v1.0 -f docker/Dockerfile .
 - See `docker/Dockerfile` for complete dependencies
 
 
+## Pre-trained Models & Data (Release v1.0.0)
+
+We release both the model checkpoint and the keyword caption dataset used in our experiments.  
+ℹ️ For full details, see the [v1.0.0 release notes](https://github.com/Toyota/clasp/releases/tag/v1.0.0).
+
+| Asset | Description | Download |
+|---|---|---|
+| model checkpoint | Checkpoint fine-tuned with COD structures and text captions | [model_finetuned_s30_m05.ckpt](https://github.com/Toyota/clasp/releases/download/v1.0.0/model_finetuned_s30_m05.ckpt) |
+| keyword captions | JSON keyword caption data used for fine-tuning | [keyword_captions_cod_full_20240331.zip](https://github.com/Toyota/clasp/releases/download/v1.0.0/keyword_captions_cod_full_20240331.zip) |
+
+
 # Quick Start
+➡️ Download the checkpoint above and place it under `model_weight/` (or any path of your choice) before running the quick start example.
+
 ## Extract Crystal Embeddings from CIF Files
 
 ```bash
@@ -32,15 +45,11 @@ docker run --gpus 1 --rm \
   -v $(pwd):/workspace \
   -w /workspace \
   clasp:v1.0 python examples/extract_embeddings.py \
-    --checkpoint_path /workspace/model_weight/last.ckpt \
+    --checkpoint_path /workspace/model_weight/model_finetuned_s30_m05.ckpt \
     --cif_list /workspace/demo_data/cif_list.txt \
     --output_path /workspace/demo_data/embeddings.npz \
     --batch_size 32
 ```
-
-
-## Pre-trained Models
-Pre-trained model weights will be released soon.
 
 
 # Training and Evaluation
