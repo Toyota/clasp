@@ -58,6 +58,16 @@ docker run --gpus 1 --rm \
     --batch_size 32
 ```
 
+## Reproducing Paper Visualizations
+
+We provide a Jupyter notebook to reproduce the visualization figures from the paper:  
+[`examples/embedding_visualization.ipynb`](examples/embedding_visualization.ipynb)
+
+The notebook demonstrates how to:
+- Visualize crystal/text embeddings (e.g., t-SNE plots)
+- Explore similarities with text queries
+- Perform clustering and generate world-map style overviews
+
 
 # Training and Evaluation
 ## Data Preparation
