@@ -1,12 +1,19 @@
-# CLaSP (Contrastive Language-Structure Pre-training)
+# CLaSP
 
 ## Overview
-CLaSP (Contrastive Language-Structure Pre-training) is a multimodal learning framework that bridges crystal structures and text descriptions from scientific literature. This repository contains the official implementation of the paper "Bridging text and crystal structures: literature-driven contrastive learning for materials science" ([Y. Suzuki, T. Taniai, R. Igarashi _et al_ 2025 _Mach. Learn.: Sci. Technol._ __6__ 035006](https://iopscience.iop.org/article/10.1088/2632-2153/ade58c)).
+CLaSP (Contrastive Language-Structure Pre-training) is a multimodal learning framework that bridges crystal structures and text descriptions from scientific literature. 
+
+This repository contains the official implementation of the paper "Bridging text and crystal structures: literature-driven contrastive learning for materials science" ([Y. Suzuki, T. Taniai, R. Igarashi _et al_ 2025 _Mach. Learn.: Sci. Technol._ __6__ 035006](https://iopscience.iop.org/article/10.1088/2632-2153/ade58c)).
 
 CLaSP enables:
 - Text-based retrieval of crystal structures
 - Zero-shot classification of materials based on their properties
 - Serving as a foundation model for multimodal tasks bridging crystal structures and text (similar to CLIP)
+
+<p align="center">
+  <img src="assets/clasp_architecture.jpg" alt="CLaSP DNN Architecture" width="800"/>
+</p>
+<p align="center">Contrastive learning paradigm of CLaSP in two stages. (1) Pre-training using pairs of crystal structures and publication titles. (2) Fine-tuning using pairs of crystal structures and keywords that are generated from the titles and abstracts using an LLM. (image from our paper).</p>
 
 ## Installation
 
@@ -55,7 +62,7 @@ docker run --gpus 1 --rm \
 # Training and Evaluation
 ## Data Preparation
 
-### 1. Download COD Metadata
+### 1. Download Crystallography Open Database (COD) Metadata
 ```bash
 cd clasp/preprocess
 python download_cod_metadata.py cod_metadata_YYYYMMDD.csv
