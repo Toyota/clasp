@@ -30,8 +30,9 @@ def load_metadata_and_embeddings(load_path, cod_basepath="/cif"):
     return metadata_df
 
 def load_caption_dataframe(json_path):
-    keywords = pd.read_json(json_path)
-    keywords_df = create_dataframe_from_json_strings(keywords["output_0"])
+    json_outer = json.loads(json_path)
+    json_strings = list(json_outer.values())
+    keywords_df = create_dataframe_from_json_strings(json_strings)
     keywords_to_exclude = ['Crystal Structure', 'X-ray diffraction', 'Neutron Diffraction', 'Powder Diffraction', "Single-Crystal X-ray Diffraction"]
     keywords_df = exclude_keywords(keywords_df, 'Keywords', keywords_to_exclude)
 
